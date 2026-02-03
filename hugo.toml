@@ -1,9 +1,8 @@
 baseURL = "https://labs.trace37.com/"
 languageCode = "en-us"
 title = "Trace37 Labs"
-theme = ""
 
-# Use internal templates (no external theme needed)
+# No external theme - using custom layouts
 disableKinds = ["taxonomy", "term"]
 
 [params]
