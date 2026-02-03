@@ -8,7 +8,7 @@ disableKinds = ["taxonomy", "term"]
 [params]
   description = "Offensive Security Research & Tools"
   author = "Trace37"
-  tagline = "Breaking things to make them better"
+  tagline = "Beyond where the documentation ends"
 
 [menu]
   [[menu.main]]
