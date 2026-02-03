@@ -13,11 +13,12 @@ Independent security research focused on breaking things to make them better.
 - Cloud security misconfigurations
 - Reverse engineering
 - Exploit development
+- AI and Software Development
 
 ### Contact
 
 - GitHub: [trace37labs](https://github.com/trace37labs)
-- Email: security@trace37.co
+- Email: paul@trace37.com
 
 ### Responsible Disclosure
 
