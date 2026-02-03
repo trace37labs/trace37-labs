@@ -1,0 +1,43 @@
+{{ define "main" }}
+<article>
+  <header class="post-header">
+    <div class="post-meta">
+      {{ .Date.Format "2006-01-02" }}
+      {{ with .Params.cve }} · <strong>{{ . }}</strong>{{ end }}
+      {{ with .ReadingTime }} · {{ . }} min read{{ end }}
+    </div>
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+    <div class="tags">
+      {{ with .Params.severity }}<span class="tag severity-{{ lower . }}">{{ . }}</span>{{ end }}
+      {{ range .Params.tags }}<span class="tag">{{ . }}</span>{{ end }}
+    </div>
+  </header>
+
+  <div class="post-content">
+    {{ .Content }}
+  </div>
+
+  {{ if eq .Section "tools" }}
+  <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+    <h3>Links</h3>
+    <div class="tool-links">
+      {{ with .Params.github }}<a href="{{ . }}">GitHub Repository →</a>{{ end }}
+      {{ with .Params.docs }}<a href="{{ . }}">Documentation →</a>{{ end }}
+      {{ with .Params.download }}<a href="{{ . }}">Download →</a>{{ end }}
+    </div>
+  </div>
+  {{ end }}
+</article>
+
+<nav style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between;">
+  {{ with .PrevInSection }}
+    <a href="{{ .Permalink }}">← {{ .Title }}</a>
+  {{ else }}
+    <span></span>
+  {{ end }}
+  {{ with .NextInSection }}
+    <a href="{{ .Permalink }}">{{ .Title }} →</a>
+  {{ end }}
+</nav>
+{{ end }}

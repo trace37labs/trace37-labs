@@ -1,0 +1,43 @@
+baseURL = "https://labs.trace37.co/"
+languageCode = "en-us"
+title = "Trace37 Labs"
+theme = ""
+
+# Use internal templates (no external theme needed)
+disableKinds = ["taxonomy", "term"]
+
+[params]
+  description = "Offensive Security Research & Tools"
+  author = "Trace37"
+  tagline = "Breaking things to make them better"
+
+[menu]
+  [[menu.main]]
+    name = "Blog"
+    url = "/blog/"
+    weight = 1
+  [[menu.main]]
+    name = "CVEs"
+    url = "/cves/"
+    weight = 2
+  [[menu.main]]
+    name = "Tools"
+    url = "/tools/"
+    weight = 3
+  [[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 4
+
+[markup]
+  [markup.highlight]
+    style = "monokai"
+    lineNos = true
+    tabWidth = 4
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
