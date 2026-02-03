@@ -31,3 +31,4 @@ hugo new tools/my-tool.md
 ## Deployment
 
 Site auto-deploys to GitHub Pages on push to `main`.
+
