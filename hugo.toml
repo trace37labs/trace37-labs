@@ -7,24 +7,24 @@ disableKinds = ["taxonomy", "term"]
 
 [params]
   description = "Offensive Security Research & Tools"
-  author = "Trace37"
+  author = "trace37"
   tagline = "Security Research | AI | Software Development"
 
 [menu]
   [[menu.main]]
-    name = "Blog"
+    name = "blog"
     url = "/blog/"
     weight = 1
   [[menu.main]]
-    name = "CVEs"
+    name = "cve"
     url = "/cves/"
     weight = 2
   [[menu.main]]
-    name = "Tools"
+    name = "tools"
     url = "/tools/"
     weight = 3
   [[menu.main]]
-    name = "About"
+    name = "about"
     url = "/about/"
     weight = 4
 
