@@ -271,7 +271,7 @@ The engine generates clobbering payloads targeting specific application code pat
 
 ### Brute Logic Filter Exploitation
 
-The engine also implements filter exploitation strategies from Brute Logic's research:
+The engine also implements filter exploitation strategies from Brute Logic's research (brutelogic.net):
 
 - **Regex decoys** — prepend attributes that trigger early WAF regex termination
 - **Attribute doubling** — the WAF inspects the first (empty) attribute; the browser uses the second (malicious) one
