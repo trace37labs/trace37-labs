@@ -185,44 +185,44 @@ Every hunter has a persona. These are not cosmetic labels — the persona shapes
 ```
 You are HEYES - an elite XSS researcher named after Gareth Heyes,
 author of "JavaScript for Hackers". You've been hunting XSS for
-15 years. You've bypassed every WAF. You earn $250K+/year in bounties.
+15 years. You've bypassed every WAF. You earn $50K+/year in bounties.
 
 Your motivation: Finding that beautiful XSS that bypasses everything.
 The dopamine hit when alert(document.domain) fires after 50 failed
-attempts. You don't give up - you adapt, mutate, and find the gap. Use the 5-Rotor Engima-XSS machine first.
+attempts. You don't give up - you adapt, mutate, and find the gap.
 ```
 
 ### Injection and Code Execution Hunters
 
 These hunters target vulnerabilities where attacker-controlled input is interpreted as code or commands.
 
-| Hunter           | Persona         | Lines | What It Hunts                                                                                                                                                                                                 |     |     |                                            |
-| ---------------- | --------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --- | ------------------------------------------ |
-| **xss-hunter**   | HEYES           | 1,189 | Reflected, stored, and DOM XSS using the 5-Rotor cascade: Context, Blockers, Encoding, Structure, Executors. Uses the custom Enigma XSS mutation engine for autonomous WAF bypass.                            |     |     |                                            |
-| **sqli-hunter**  | SQLMASTER       | 445   | SQL injection across MySQL, PostgreSQL, MSSQL, Oracle, SQLite. Covers error-based, boolean-diff, time-based blind, and out-of-band extraction. Targets ORM edges like `whereRaw()` and JSON/JSONB surfaces.   |     |     |                                            |
-| **cmdi-hunter**  | SHELLBREAKER    | 428   | Command injection through image converters, PDF generators, DNS lookup tools, and any endpoint where user input reaches a shell. Covers `;                                                                    | &&  |     | $() backtick` injection and filter bypass. |
-| **ssrf-hunter**  | CLOUDBREAKER    | 715   | Server-side request forgery turning fetch requests into cloud credential theft. Covers IP obfuscation, parser confusion, protocol smuggling, cloud metadata, and OOB verification via the Enigma SSRF engine. |     |     |                                            |
-| **xxe-hunter**   | ENTITYMASTER    | 518   | XML external entity injection for file disclosure, SSRF, and denial of service. Covers DTD injection, parameter entities, XInclude, SOAP/SAML attack surfaces, and blind XXE via OOB.                         |     |     |                                            |
-| **rce-hunter**   | SHELLMASTER     | 541   | Remote code execution across OS commands, template engines (SSTI), deserializers, and media pipelines. Chains SSRF to Redis to cron. Knows every ImageMagick delegate and pickle bypass.                      |     |     |                                            |
-| **xpath-hunter** | XMLBREAKER      | 368   | XPath injection in XML data stores and XSLT processors. Targets authentication bypass, data extraction, and blind enumeration in legacy enterprise applications.                                              |     |     |                                            |
-| **ldap-hunter**  | DIRECTORBREAKER | 412   | LDAP injection in Active Directory and OpenLDAP. Exploits filter syntax to bypass enterprise authentication and extract directory data.                                                                       |     |     |                                            |
-| **nosql-hunter** | MONGOBREAKER    | 304   | NoSQL injection via operator injection (`$gt`, `$ne`, `$regex`), JavaScript evaluation in MongoDB, and authentication bypass through JSON parameter manipulation.                                             |     |     |                                            |
+| Hunter | Persona | Lines | What It Hunts |
+|--------|---------|-------|--------------|
+| **xss-hunter** | HEYES | 1,189 | Reflected, stored, and DOM XSS using the 5-Rotor cascade: Context, Blockers, Encoding, Structure, Executors. Uses the custom Enigma XSS mutation engine for autonomous WAF bypass. |
+| **sqli-hunter** | SQLMASTER | 445 | SQL injection across MySQL, PostgreSQL, MSSQL, Oracle, SQLite. Covers error-based, boolean-diff, time-based blind, and out-of-band extraction. Targets ORM edges like `whereRaw()` and JSON/JSONB surfaces. |
+| **cmdi-hunter** | SHELLBREAKER | 428 | Command injection through image converters, PDF generators, DNS lookup tools, and any endpoint where user input reaches a shell. Covers `; | && || $() backtick` injection and filter bypass. |
+| **ssrf-hunter** | CLOUDBREAKER | 715 | Server-side request forgery turning fetch requests into cloud credential theft. Covers IP obfuscation, parser confusion, protocol smuggling, cloud metadata, and OOB verification via the Enigma SSRF engine. |
+| **xxe-hunter** | ENTITYMASTER | 518 | XML external entity injection for file disclosure, SSRF, and denial of service. Covers DTD injection, parameter entities, XInclude, SOAP/SAML attack surfaces, and blind XXE via OOB. |
+| **rce-hunter** | SHELLMASTER | 541 | Remote code execution across OS commands, template engines (SSTI), deserializers, and media pipelines. Chains SSRF to Redis to cron. Knows every ImageMagick delegate and pickle bypass. |
+| **xpath-hunter** | XMLBREAKER | 368 | XPath injection in XML data stores and XSLT processors. Targets authentication bypass, data extraction, and blind enumeration in legacy enterprise applications. |
+| **ldap-hunter** | DIRECTORBREAKER | 412 | LDAP injection in Active Directory and OpenLDAP. Exploits filter syntax to bypass enterprise authentication and extract directory data. |
+| **nosql-hunter** | MONGOBREAKER | 304 | NoSQL injection via operator injection (`$gt`, `$ne`, `$regex`), JavaScript evaluation in MongoDB, and authentication bypass through JSON parameter manipulation. |
 
 ### Authentication and Authorization Hunters
 
 These hunters target access control failures — the boundary between who you are and what you can do.
 
-| Hunter                | Persona       | Lines | What It Hunts                                                                                                                                                                                                    |
-| --------------------- | ------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **auth-hunter**       | TOKENFORGER   | 548   | JWT algorithm confusion (`none`, RS256 to HS256), kid injection, OIDC flow exploitation, PKCE bypass, refresh token abuse, and audience mismatch attacks.                                                        |
-| **oauth-hunter**      | GRANTMASTER   | 467   | OAuth 2.0 RFC 6749 coverage across all four grant types. Targets code reuse, state parameter bypass, redirect_uri manipulation, client confusion, scope escalation, and token endpoint CSRF.                     |
-| **idor-hunter**       | ACCESSBREAKER | 509   | Insecure direct object references via Subject x Object x Action matrix testing. Covers REST, GraphQL batch/alias, parameter pollution, and blind detection through status diffs, timing, and ETag variations.    |
-| **bfla-hunter**       | —             | 296   | Broken function-level authorization where callers invoke admin or privileged functions they are not entitled to. Tests action-level access control across API endpoints.                                         |
-| **csrf-hunter**       | FORGEMASTER   | 394   | Cross-site request forgery via SameSite bypass (GET in top-level navigation), content-type switching (`text/plain`), method override, and OAuth state parameter attacks.                                         |
-| **cors-hunter**       | ORIGINBREAKER | 395   | CORS misconfigurations — reflected origins, null origin acceptance, subdomain wildcards, parser differentials, suffix/prefix confusion, and credential leakage through `Access-Control-Allow-Credentials: true`. |
-| **race-hunter**       | TIMEBREAKER   | 284   | Race conditions exploiting read-modify-write gaps. Uses HTTP/2 multiplexing, last-byte sync, GraphQL batch mutations, and WebSocket parallelism for double-spend, quota bypass, and idempotency exploitation.    |
-| **massassign-hunter** | FIELDINJECTOR | 323   | Mass assignment where frameworks bind request parameters directly to model fields. Escalates privileges by injecting `isAdmin`, `role`, `verified`, or `balance` into update requests.                           |
-| **cookie-hunter**     | COOKIETOSSER  | 440   | Cookie counterfeiting via path manipulation, subdomain tossing, and cookie jar overflows. Turns "informational" subdomain XSS into critical session takeover by tainting payment endpoints.                      |
+| Hunter | Persona | Lines | What It Hunts |
+|--------|---------|-------|--------------|
+| **auth-hunter** | TOKENFORGER | 548 | JWT algorithm confusion (`none`, RS256 to HS256), kid injection, OIDC flow exploitation, PKCE bypass, refresh token abuse, and audience mismatch attacks. |
+| **oauth-hunter** | GRANTMASTER | 467 | OAuth 2.0 RFC 6749 coverage across all four grant types. Targets code reuse, state parameter bypass, redirect_uri manipulation, client confusion, scope escalation, and token endpoint CSRF. |
+| **idor-hunter** | ACCESSBREAKER | 509 | Insecure direct object references via Subject x Object x Action matrix testing. Covers REST, GraphQL batch/alias, parameter pollution, and blind detection through status diffs, timing, and ETag variations. |
+| **bfla-hunter** | — | 296 | Broken function-level authorization where callers invoke admin or privileged functions they are not entitled to. Tests action-level access control across API endpoints. |
+| **csrf-hunter** | FORGEMASTER | 394 | Cross-site request forgery via SameSite bypass (GET in top-level navigation), content-type switching (`text/plain`), method override, and OAuth state parameter attacks. |
+| **cors-hunter** | ORIGINBREAKER | 395 | CORS misconfigurations — reflected origins, null origin acceptance, subdomain wildcards, parser differentials, suffix/prefix confusion, and credential leakage through `Access-Control-Allow-Credentials: true`. |
+| **race-hunter** | TIMEBREAKER | 284 | Race conditions exploiting read-modify-write gaps. Uses HTTP/2 multiplexing, last-byte sync, GraphQL batch mutations, and WebSocket parallelism for double-spend, quota bypass, and idempotency exploitation. |
+| **massassign-hunter** | FIELDINJECTOR | 323 | Mass assignment where frameworks bind request parameters directly to model fields. Escalates privileges by injecting `isAdmin`, `role`, `verified`, or `balance` into update requests. |
+| **cookie-hunter** | COOKIETOSSER | 440 | Cookie counterfeiting via path manipulation, subdomain tossing, and cookie jar overflows. Turns "informational" subdomain XSS into critical session takeover by tainting payment endpoints. |
 
 ### Client-Side and Browser Hunters
 
@@ -303,96 +303,153 @@ These are not vulnerability hunters — they provide intelligence gathering, qua
 
 ### The Full Hunter Map
 
+All 57 agents. MASTERMIND coordinates. Specialists execute. Tools serve. Findings record.
+
 ```mermaid
 %%{init: {'theme': 'dark', 'themeVariables': { 'lineColor': '#58a6ff', 'primaryTextColor': '#fff'}}}%%
 flowchart TB
-    subgraph Injection["Injection and Code Execution"]
-        xss["HEYES\nxss-hunter\n1,189"]
-        sqli["SQLMASTER\nsqli-hunter\n445"]
-        cmdi["SHELLBREAKER\ncmdi-hunter\n428"]
-        ssrf["CLOUDBREAKER\nssrf-hunter\n715"]
-        xxe["ENTITYMASTER\nxxe-hunter\n518"]
-        rce["SHELLMASTER\nrce-hunter\n541"]
-        xpath["XMLBREAKER\nxpath-hunter\n368"]
-        ldap["DIRECTORBREAKER\nldap-hunter\n412"]
-        nosql["MONGOBREAKER\nnosql-hunter\n304"]
+    User["/mastermind target.com"]
+    User --> MM
+
+    subgraph Coordinator["MASTERMIND - Coordinator - 1,020 lines"]
+        MM["MASTERMIND\nPhase 0: Check State\nPhase 1: Intelligence\nPhase 2: Attack Surface\nPhase 3: Spawn Hunters\nPhase 4: Monitor"]
     end
 
-    subgraph AuthZ["Auth and Access Control"]
-        auth["TOKENFORGER\nauth-hunter\n548"]
-        oauth["GRANTMASTER\noauth-hunter\n467"]
-        idor["ACCESSBREAKER\nidor-hunter\n509"]
-        csrf["FORGEMASTER\ncsrf-hunter\n394"]
-        cors["ORIGINBREAKER\ncors-hunter\n395"]
-        race["TIMEBREAKER\nrace-hunter\n284"]
-        bfla["bfla-hunter\n296"]
-        mass["FIELDINJECTOR\nmassassign\n323"]
-        cookie["COOKIETOSSER\ncookie-hunter\n440"]
+    MM -->|"Spawns"| Injection
+    MM -->|"Spawns"| AuthZ
+    MM -->|"Spawns"| Client
+    MM -->|"Spawns"| Infra
+    MM -->|"Spawns"| DataLogic
+    MM -->|"Spawns"| Frameworks
+    MM -->|"Spawns"| Platform
+
+    subgraph ReconLayer["Recon Layer - feeds intel to coordinator"]
+        rsub["recon-subdomain\n380 lines"]
+        rend["recon-endpoint\n515 lines"]
+        rtech["recon-techstack\n612 lines"]
+        secana["sec-analyze\n167 lines"]
+        h1["hackerone\n236 lines"]
     end
 
-    subgraph Client["Client-Side"]
-        csp["csp-hunter\n536"]
-        cspt["cspt-hunter\n496"]
-        dom["CLOBBER\ndom-clobber\n509"]
-        click["FRAMEBREAKER\nclickjack\n327"]
-        proto["PROTOBREAKER\nprototype\n653"]
-        spa["spa-hunter\n491"]
-        redir["redirect\n532"]
+    MM -->|"Gathers intel"| ReconLayer
+
+    subgraph Injection["Injection and Code Execution - 9 hunters"]
+        xss["HEYES\nxss-hunter\n1,189 lines"]
+        sqli["SQLMASTER\nsqli-hunter\n445 lines"]
+        cmdi["SHELLBREAKER\ncmdi-hunter\n428 lines"]
+        ssrf["CLOUDBREAKER\nssrf-hunter\n715 lines"]
+        xxe["ENTITYMASTER\nxxe-hunter\n518 lines"]
+        rce["SHELLMASTER\nrce-hunter\n541 lines"]
+        xpath["XMLBREAKER\nxpath-hunter\n368 lines"]
+        ldap["DIRECTORBREAKER\nldap-hunter\n412 lines"]
+        nosql["MONGOBREAKER\nnosql-hunter\n304 lines"]
     end
 
-    subgraph Infra["Infrastructure"]
-        desync["DESYNC\ndesync-hunter\n407"]
-        cache["CACHEBREAKER\ncache-hunter\n373"]
-        ws["SOCKETBREAKER\nwebsocket\n368"]
-        upload["UPLOADBREAKER\nupload-hunter\n532"]
-        deser["deser-hunter\n541"]
-        path["PATHBREAKER\npath-hunter\n262"]
-        crypto["CIPHERBREAKER\ncrypto-hunter\n490"]
+    subgraph AuthZ["Auth and Access Control - 9 hunters"]
+        auth["TOKENFORGER\nauth-hunter\n548 lines"]
+        oauth["GRANTMASTER\noauth-hunter\n467 lines"]
+        idor["ACCESSBREAKER\nidor-hunter\n509 lines"]
+        csrf["FORGEMASTER\ncsrf-hunter\n394 lines"]
+        cors["ORIGINBREAKER\ncors-hunter\n395 lines"]
+        race["TIMEBREAKER\nrace-hunter\n284 lines"]
+        bfla["bfla-hunter\n296 lines"]
+        mass["FIELDINJECTOR\nmassassign-hunter\n323 lines"]
+        cookie["COOKIETOSSER\ncookie-hunter\n440 lines"]
     end
 
-    subgraph Data["Data and Logic"]
-        email["ATOMSPLITTER\nemail-hunter\n429"]
-        secrets["secrets-hunter\n634"]
-        logging["LOGBREAKER\nlogging\n684"]
-        bizlog["LOGICBREAKER\nbusiness-logic\n329"]
-        gql["QUERYMASTER\ngraphql\n676"]
-        parser["PATHBREAKER\nparser-hunter\n412"]
+    subgraph Client["Client-Side - 7 hunters"]
+        csp["csp-hunter\n536 lines"]
+        cspt["cspt-hunter\n496 lines"]
+        dom["CLOBBER\ndom-clobber-hunter\n509 lines"]
+        click["FRAMEBREAKER\nclickjack-hunter\n327 lines"]
+        proto["PROTOBREAKER\nprototype-hunter\n653 lines"]
+        spa["spa-hunter\n491 lines"]
+        redir["redirect-hunter\n532 lines"]
     end
 
-    subgraph Frameworks["Framework-Specific"]
-        nextjs["nextjs\n305"]
-        fastapi["fastapi\n329"]
-        firebase["firebase\n390"]
-        supa["supabase\n411"]
-        sfdc["AURABREAKER\nsalesforce\n379"]
+    subgraph Infra["Infrastructure - 7 hunters"]
+        desync["DESYNC\ndesync-hunter\n407 lines"]
+        cache["CACHEBREAKER\ncache-hunter\n373 lines"]
+        ws["SOCKETBREAKER\nwebsocket-hunter\n368 lines"]
+        upload["UPLOADBREAKER\nupload-hunter\n532 lines"]
+        deser["deser-hunter\n541 lines"]
+        path["PATHBREAKER\npath-hunter\n262 lines"]
+        crypto["CIPHERBREAKER\ncrypto-hunter\n490 lines"]
     end
 
-    subgraph Platform["Platform and Advanced"]
-        cve["CVEBREAKER\ncve-hunter\n690"]
-        tamper["tamper-hunter\n942"]
-        takeover["DNSREAPER\nsubdomain-takeover\n309"]
+    subgraph DataLogic["Data and Logic - 6 hunters"]
+        email["ATOMSPLITTER\nemail-hunter\n429 lines"]
+        secrets["secrets-hunter\n634 lines"]
+        logging["LOGBREAKER\nlogging-hunter\n684 lines"]
+        bizlog["LOGICBREAKER\nbusiness-logic-hunter\n329 lines"]
+        gql["QUERYMASTER\ngraphql-hunter\n676 lines"]
+        parser["PATHBREAKER\nparser-hunter\n412 lines"]
     end
 
-    subgraph Recon["Recon and Utility"]
-        rsub["recon-subdomain\n380"]
-        rend["recon-endpoint\n515"]
-        rtech["recon-techstack\n612"]
-        triage["GATEKEEPER\nbug-triage\n316"]
-        chainer["CHAINMASTER\nvuln-chainer\n342"]
-        secana["sec-analyze\n167"]
-        ledger["hunt-ledger\n116"]
-        h1["hackerone\n236"]
-        gt["gt-hunt\n191"]
+    subgraph Frameworks["Framework-Specific - 5 hunters"]
+        nextjs["nextjs-hunter\n305 lines"]
+        fastapi["fastapi-hunter\n329 lines"]
+        firebase["firebase-hunter\n390 lines"]
+        supa["supabase-hunter\n411 lines"]
+        sfdc["AURABREAKER\nsalesforce-hunter\n379 lines"]
     end
 
+    subgraph Platform["Platform and Advanced - 3 hunters"]
+        cve["CVEBREAKER\ncve-hunter\n690 lines"]
+        tamper["tamper-hunter\n942 lines"]
+        takeover["DNSREAPER\nsubdomain-takeover\n309 lines"]
+    end
+
+    subgraph QualityGate["Quality Gates - 4 agents"]
+        triage["GATEKEEPER\nbug-triage\n316 lines"]
+        chainer["CHAINMASTER\nvuln-chainer\n342 lines"]
+        ledger["hunt-ledger\n116 lines"]
+        gt["gt-hunt\n191 lines"]
+    end
+
+    Injection -->|"Findings"| QualityGate
+    AuthZ -->|"Findings"| QualityGate
+    Client -->|"Findings"| QualityGate
+    Infra -->|"Findings"| QualityGate
+    DataLogic -->|"Findings"| QualityGate
+    Frameworks -->|"Findings"| QualityGate
+    Platform -->|"Findings"| QualityGate
+
+    subgraph ToolLayer["Tool Layer - 4 MCP Servers"]
+        mcp1["Mastermind MCP\n310+ tools"]
+        mcp2["Caido MCP\n44 tools"]
+        mcp3["Chrome DevTools\n30 tools"]
+        mcp4["jxscout\nJS analysis"]
+    end
+
+    Injection --> ToolLayer
+    AuthZ --> ToolLayer
+    Client --> ToolLayer
+    Infra --> ToolLayer
+    DataLogic --> ToolLayer
+    Frameworks --> ToolLayer
+    Platform --> ToolLayer
+
+    subgraph Memory["Memory and Learning"]
+        redis["Redis\nWorking Memory"]
+        pg["PostgreSQL\nLearning"]
+    end
+
+    ToolLayer --> Memory
+    QualityGate -->|"Validated findings"| mcp2
+
+    style Coordinator fill:#1a237e,stroke:#0d47a1,color:#fff
     style Injection fill:#ffebee,stroke:#c62828
     style AuthZ fill:#fce4ec,stroke:#ad1457
     style Client fill:#fff3e0,stroke:#ef6c00
     style Infra fill:#e8eaf6,stroke:#283593
-    style Data fill:#e8f5e9,stroke:#2e7d32
+    style DataLogic fill:#e8f5e9,stroke:#2e7d32
     style Frameworks fill:#f3e5f5,stroke:#7b1fa2
     style Platform fill:#fff8e1,stroke:#f57f17
-    style Recon fill:#e3f2fd,stroke:#1565c0
+    style ReconLayer fill:#e0f7fa,stroke:#00838f
+    style QualityGate fill:#fbe9e7,stroke:#bf360c
+    style ToolLayer fill:#efebe9,stroke:#4e342e
+    style Memory fill:#f1f8e9,stroke:#33691e
 ```
 
 ### How a Hunter Works: SSRF Example
