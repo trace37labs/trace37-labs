@@ -1,14 +1,14 @@
 baseURL = "https://labs.trace37.com/"
 languageCode = "en-us"
-title = "Trace37 Labs"
+title = "trace37 labs"
 
 # No external theme - using custom layouts
 disableKinds = ["taxonomy", "term"]
 
 [params]
-  description = "Offensive Security Research & Tools"
+  description = "offensive security research & tools"
   author = "trace37"
-  tagline = "Security Research | AI | Software Development"
+  tagline = "security research | ai | software development"
 
 [menu]
   [[menu.main]]
