@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enigma SSRF Engine - Complete Decision Map | trace37 labs</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .header {
+      max-width: 1400px;
+      margin: 0 auto 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #30363d;
+    }
+    h1 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .back-link {
+      color: #58a6ff;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .diagram-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 2rem;
+      overflow-x: auto;
+    }
+    .mermaid { width: 100%; }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="header">
+    <h1>Enigma SSRF Engine - Complete Decision Map</h1>
+    <a href="/blog/enigma-ssrf-engine/" class="back-link">← Back to article</a>
+  </div>
+
+  <div class="diagram-container">
+    <div class="mermaid">
+%%{init: {'theme': 'dark', 'themeVariables': { 'lineColor': '#58a6ff', 'primaryTextColor': '#fff'}}}%%
+flowchart TB
+    START(["SSRF Scan"]) --> DISC
+
+    subgraph DISC["Phase 1: DISCOVERY"]
+        direction LR
+        D1["Feature detection<br/>webhook, proxy, PDF,<br/>image, import, redirect"]
+        D2["Parameter matching<br/>url, callback, dest,<br/>source, proxy, forward"]
+        D3["Stack fingerprint<br/>PHP, Python, Node,<br/>Java, Ruby, .NET, Go"]
+    end
+
+    DISC --> TARG
+
+    subgraph TARG["Phase 2: TARGET SELECTION"]
+        direction LR
+        T1["Cloud Metadata<br/>AWS, GCP, Azure,<br/>DO, Alibaba, Oracle"]
+        T2["Internal Services<br/>Redis, ES, Docker,<br/>K8s, Consul, etcd"]
+        T3["Localhost Admin<br/>/admin, /actuator,<br/>/server-status, /debug"]
+        T4["Network Scan<br/>Subnet + port<br/>cartesian product"]
+    end
+
+    TARG --> BYP
+
+    subgraph BYP["Phase 3: BYPASS TECHNIQUES"]
+        B1["IP Obfuscation<br/>decimal, octal, hex,<br/>IPv6, overflow, DNS"]
+        B2["Parser Confusion<br/>@ symbol, fragment,<br/>backslash, CRLF,<br/>Unicode, encoding"]
+        B3["Protocol Smuggling<br/>file://, gopher://,<br/>dict://, ftp://, data://"]
+        B4["Header Injection<br/>X-Forwarded-For,<br/>X-Forwarded-Host,<br/>Referer, X-Original-URL"]
+        B5["Redirect Chains<br/>Open redirect through<br/>allowed domain"]
+    end
+
+    BYP --> CONF
+
+    subgraph CONF["Phase 4: CONFIRMATION"]
+        direction LR
+        C1["OOB Callbacks<br/>HTTP, DNS-only,<br/>path-identified,<br/>redirect chain"]
+        C2["Timing Analysis<br/>Mean + stddev,<br/>timeout detection,<br/>outlier flagging"]
+        C3["Content Matching<br/>Credential patterns,<br/>service fingerprints,<br/>file content"]
+        C4["Size Analysis<br/>Internal vs external<br/>group comparison"]
+    end
+
+    CONF --> RESULT{Result?}
+
+    RESULT -->|"Confirmed"| IMPACT["Impact Assessment<br/>CVSS scoring<br/>Exploitation path"]
+    RESULT -->|"Blocked"| BYP
+    RESULT -->|"No signal"| DISC
+
+    IMPACT --> REPORT(["Finding Reported<br/>Slack + Desktop + Terminal"])
+
+    style DISC fill:#264653,stroke:#2a9d8f,color:#fff
+    style TARG fill:#2a9d8f,stroke:#e9c46a,color:#fff
+    style BYP fill:#e76f51,stroke:#fff,color:#fff
+    style CONF fill:#00ff88,stroke:#000,color:#000
+    style REPORT fill:#e74c3c,color:#fff
+    style IMPACT fill:#9b59b6,color:#fff
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#3b82f6',
+        primaryTextColor: '#fff',
+        primaryBorderColor: '#58a6ff',
+        lineColor: '#58a6ff',
+        secondaryColor: '#1f2937',
+        tertiaryColor: '#374151',
+        background: '#0d1117',
+        mainBkg: '#1f2937',
+        nodeBorder: '#58a6ff',
+        clusterBkg: '#1f2937',
+        clusterBorder: '#58a6ff',
+        titleColor: '#fff',
+        edgeLabelBackground: '#1f2937'
+      },
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true,
+        curve: 'basis'
+      }
+    });
+  </script>
+</body>
+</html>
