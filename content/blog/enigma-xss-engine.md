@@ -571,6 +571,8 @@ These aren't just nice ideas. They're encoded as hard constraints in the compose
 
 This is the full strategy map — every context, every blocker type, every bypass strategy the engine can enter. The earlier diagrams showed individual cascades in detail. This shows how they all connect.
 
+<a href="/diagrams/complete-decision-map.html" target="_blank" style="display:inline-block;margin-bottom:1rem;color:#58a6ff;">→ Open diagram in full screen (new tab)</a>
+
 ```mermaid
 %%{init: {'theme': 'dark', 'themeVariables': { 'lineColor': '#58a6ff', 'primaryTextColor': '#fff'}}}%%
 flowchart TB

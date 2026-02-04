@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enigma XSS Engine - Complete Decision Map | trace37 labs</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .header {
+      max-width: 1400px;
+      margin: 0 auto 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #30363d;
+    }
+    h1 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .back-link {
+      color: #58a6ff;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .diagram-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 2rem;
+      overflow-x: auto;
+    }
+    .mermaid { width: 100%; }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="header">
+    <h1>Enigma XSS Engine - Complete Decision Map</h1>
+    <a href="/blog/enigma-xss-engine/" class="back-link">← Back to article</a>
+  </div>
+
+  <div class="diagram-container">
+    <div class="mermaid">
+%%{init: {'theme': 'dark', 'themeVariables': { 'lineColor': '#58a6ff', 'primaryTextColor': '#fff'}}}%%
+flowchart TB
+    START(["Probe Response"]) --> R1
+
+    subgraph R1["R1: CONTEXT"]
+        direction LR
+        CTX_HC["html_content"]
+        CTX_HA["html_attribute"]
+        CTX_SS["script_string"]
+        CTX_SB["script_block"]
+        CTX_HR["href_attribute"]
+        CTX_SVG["svg_context"]
+        CTX_JSON["json_body"]
+    end
+
+    R1 --> BASELINE["Baseline Test"]
+    BASELINE --> BRESULT{Result?}
+    BRESULT -->|EXECUTED| XSS(["XSS FOUND"])
+    BRESULT -->|BLOCKED| BSEARCH["Binary Search"]
+    BRESULT -->|REFLECTED| BSEARCH
+
+    BSEARCH --> R2
+
+    subgraph R2["R2: BLOCKERS DETECTED"]
+        direction LR
+        BLK_ANG["Angles"]
+        BLK_PAR["Parens"]
+        BLK_QUO["Quotes"]
+        BLK_SPC["Space"]
+        BLK_KEY["Keywords"]
+        BLK_EVT["Events"]
+        BLK_TAG["Tags"]
+        BLK_SCR["Script"]
+        BLK_HRF["javascript:"]
+        BLK_WIN["window"]
+    end
+
+    BLK_ANG --> S_ANG
+    BLK_PAR --> S_PAR
+    BLK_QUO --> S_QUO
+    BLK_SPC --> S_SPC
+    BLK_KEY --> S_KEY
+    BLK_EVT --> S_EVT
+    BLK_TAG --> S_TAG
+    BLK_SCR --> S_SCR
+    BLK_HRF --> S_HRF
+    BLK_WIN --> S_WIN
+
+    subgraph STRATEGIES["R3+R4: ENCODING + STRUCTURE"]
+        S_ANG["ANGLE: entities, SVG decode"]
+        S_PAR["PAREN: backticks, throw, valueOf, hasInstance, Reflect, JSFuck"]
+        S_QUO["QUOTE: switch type, backtick, hex, entities"]
+        S_SPC["SPACE: tab, newline, slash, formfeed, comment"]
+        S_KEY["KEYWORD: confirm, prompt, print, eval+atob"]
+        S_EVT["EVENT: onload, ontoggle, onfocus, onbegin, popover"]
+        S_TAG["TAG: svg, body, details, input, math, custom"]
+        S_SCR["SCRIPT: close tag, backslash, unicode"]
+        S_HRF["HREF: data URI, protocol, tab inject"]
+        S_WIN["WINDOW: self, globalThis, this, top, parent"]
+    end
+
+    subgraph ADVANCED["ADVANCED STRATEGIES"]
+        direction LR
+        ADV_CLOB["DOM Clobbering"]
+        ADV_PROTO["Prototype Pollution"]
+        ADV_WNAME["Window.name"]
+        ADV_SMAP["Source Maps"]
+        ADV_SVG["SVG Upload"]
+        ADV_XHTML["XHTML"]
+        ADV_FUZZ["Mutation Fuzz"]
+        ADV_BROWSER["Browser-Specific"]
+    end
+
+    STRATEGIES --> R5
+    ADVANCED --> R5
+
+    subgraph R5["R5: EXECUTION"]
+        direction LR
+        AUTO["Auto-fire: onerror, onload, ontoggle, onfocus, onbegin, popover"]
+        INTERACT["Interaction: onclick, onmouseover, accesskey"]
+    end
+
+    R5 --> COMBINE["Combine: Tag + Event + Function"]
+    COMBINE --> TEST{Test Payload}
+
+    TEST -->|EXECUTED| XSS
+    TEST -->|BLOCKED| LEARN["Learn blocker"]
+    LEARN --> R2
+
+    TEST -->|EXHAUSTED| ENUM["PIVOT: Enumerate 80+ tags, 60+ events"]
+    ENUM --> COMBINE
+
+    style START fill:#1f2937,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style XSS fill:#22c55e,stroke:#fff,stroke-width:3px,color:#000
+    style R1 fill:#3b5998,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style R2 fill:#2a9d8f,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style STRATEGIES fill:#1e3a5f,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style ADVANCED fill:#1e3a5f,stroke:#f4a261,stroke-width:2px,color:#fff
+    style R5 fill:#e76f51,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style ENUM fill:#f4a261,stroke:#58a6ff,stroke-width:2px,color:#000
+    style LEARN fill:#9333ea,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style BASELINE fill:#1f2937,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style BSEARCH fill:#1f2937,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style COMBINE fill:#1f2937,stroke:#58a6ff,stroke-width:2px,color:#fff
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#3b82f6',
+        primaryTextColor: '#fff',
+        primaryBorderColor: '#58a6ff',
+        lineColor: '#58a6ff',
+        secondaryColor: '#1f2937',
+        tertiaryColor: '#374151',
+        background: '#0d1117',
+        mainBkg: '#1f2937',
+        nodeBorder: '#58a6ff',
+        clusterBkg: '#1f2937',
+        clusterBorder: '#58a6ff',
+        titleColor: '#fff',
+        edgeLabelBackground: '#1f2937'
+      },
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true,
+        curve: 'basis'
+      }
+    });
+  </script>
+</body>
+</html>
