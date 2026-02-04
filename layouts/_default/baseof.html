@@ -27,5 +27,34 @@
   </main>
 
   {{ partial "footer.html" . }}
+
+  <!-- Mermaid.js for diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#3b82f6',
+        primaryTextColor: '#fff',
+        primaryBorderColor: '#58a6ff',
+        lineColor: '#58a6ff',
+        secondaryColor: '#1f2937',
+        tertiaryColor: '#374151',
+        background: '#0d1117',
+        mainBkg: '#1f2937',
+        nodeBorder: '#58a6ff',
+        clusterBkg: '#1f2937',
+        clusterBorder: '#58a6ff',
+        titleColor: '#fff',
+        edgeLabelBackground: '#1f2937'
+      },
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: 'basis'
+      }
+    });
+  </script>
 </body>
 </html>
