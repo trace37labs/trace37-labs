@@ -389,6 +389,30 @@ pre code {
   font-size: 0.8rem;
 }
 
+/* More button - prominent CTA */
+.more-button {
+  display: block;
+  width: 100%;
+  padding: 1rem 2rem;
+  margin-top: 2rem;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--accent);
+  border-radius: 6px;
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.more-button:hover {
+  background: var(--accent);
+  color: var(--bg-primary);
+  text-decoration: none;
+}
+
 /* Tool cards */
 .tool-card {
   background: var(--bg-secondary);

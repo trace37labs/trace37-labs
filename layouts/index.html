@@ -5,15 +5,14 @@
 </section>
 
 <!-- Recent Blog Posts -->
-{{ $posts := where .Site.RegularPages "Section" "blog" }}
+{{ $posts := (where .Site.RegularPages "Section" "blog").ByDate.Reverse }}
 {{ if $posts }}
 <section>
   <div class="section-header">
     <h2>// recent posts</h2>
-    <a href="/blog/" class="view-all">view all →</a>
   </div>
   <ul class="post-list">
-    {{ range first 3 $posts }}
+    {{ range first 10 $posts }}
     <li class="post-item">
       <div class="post-meta">{{ .Date.Format "2006-01-02" }}</div>
       <h3 class="post-title"><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
@@ -21,6 +20,9 @@
     </li>
     {{ end }}
   </ul>
+  {{ if gt (len $posts) 10 }}
+  <a href="/blog/" class="more-button">MORE POSTS →</a>
+  {{ end }}
 </section>
 {{ end }}
 
