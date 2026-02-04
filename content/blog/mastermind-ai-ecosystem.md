@@ -103,9 +103,9 @@ Every hunter skill includes HTTPQL patterns specific to its vulnerability class.
 
 ### Chrome DevTools MCP — Real Browser Testing
 
-The Chrome DevTools MCP provides 30 tools across input automation (click, fill, drag), page navigation, network debugging, console message capture, performance tracing, screenshot capture, and JavaScript execution. It launches a headless Chrome instance pre-loaded with @kevin_mizu 's DOMLoggerPP extension for client-side vulnerability detection, and routes all traffic through the Caido proxy on port 18080.
+The Chrome DevTools MCP provides 30 tools across input automation (click, fill, drag), page navigation, network debugging, console message capture, performance tracing, screenshot capture, and JavaScript execution. It launches a headless Chrome instance pre-loaded with the DOMLoggerPP extension for client-side vulnerability detection, and routes all traffic through the Caido proxy on port 18080.
 
-This creates a closed loop: browse a target in Chrome, capture all requests in Caido, analyze JavaScript with jxscout (https://jxscout.app/), and test payloads — all through MCP tool calls from a single Claude conversation.
+This creates a closed loop: browse a target in Chrome, capture all requests in Caido, analyze JavaScript with jxscout, and test payloads — all through MCP tool calls from a single Claude conversation.
 
 ### jxscout MCP — JavaScript Attack Surface Extraction
 
@@ -839,8 +839,6 @@ Payloads are tried in order of historical effectiveness. Approaches that have fa
 ---
 
 ## The Complete Architecture
-
-<a href="/diagrams/mastermind-architecture.html" target="_blank" style="display:inline-block;margin-bottom:1rem;color:#58a6ff;">→ Open diagram in full screen (new tab)</a>
 
 ```mermaid
 %%{init: {'theme': 'dark', 'themeVariables': { 'lineColor': '#58a6ff', 'primaryTextColor': '#fff'}}}%%
