@@ -31,6 +31,16 @@
   <!-- Mermaid.js for diagrams -->
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script>
+    // Convert Hugo code blocks to Mermaid divs
+    document.querySelectorAll('pre code.language-mermaid').forEach(function(codeBlock) {
+      var content = codeBlock.textContent;
+      var div = document.createElement('div');
+      div.className = 'mermaid';
+      div.textContent = content;
+      codeBlock.parentNode.replaceWith(div);
+    });
+
+    // Initialize Mermaid
     mermaid.initialize({
       startOnLoad: true,
       theme: 'dark',
