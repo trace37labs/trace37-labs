@@ -567,6 +567,119 @@ Three principles drive every decision in the engine:
 
 These aren't just nice ideas. They're encoded as hard constraints in the composer. The engine literally cannot retry a known-blocked pattern. It literally cannot propose a mutation without referencing the current knowledge state. The architecture enforces the methodology.
 
+## The Complete Decision Map
+
+This is the full strategy map — every context, every blocker type, every bypass strategy the engine can enter. The earlier diagrams showed individual cascades in detail. This shows how they all connect.
+
+```mermaid
+%%{init: {'theme': 'dark', 'themeVariables': { 'lineColor': '#58a6ff', 'primaryTextColor': '#fff'}}}%%
+flowchart TB
+    START(["Probe Response"]) --> R1
+
+    subgraph R1["R1: CONTEXT"]
+        direction LR
+        CTX_HC["html_content"]
+        CTX_HA["html_attribute"]
+        CTX_SS["script_string"]
+        CTX_SB["script_block"]
+        CTX_HR["href_attribute"]
+        CTX_SVG["svg_context"]
+        CTX_JSON["json_body"]
+    end
+
+    R1 --> BASELINE["Baseline Test"]
+    BASELINE --> BRESULT{Result?}
+    BRESULT -->|EXECUTED| XSS(["XSS FOUND"])
+    BRESULT -->|BLOCKED| BSEARCH["Binary Search"]
+    BRESULT -->|REFLECTED| BSEARCH
+
+    BSEARCH --> R2
+
+    subgraph R2["R2: BLOCKERS DETECTED"]
+        direction LR
+        BLK_ANG["Angles"]
+        BLK_PAR["Parens"]
+        BLK_QUO["Quotes"]
+        BLK_SPC["Space"]
+        BLK_KEY["Keywords"]
+        BLK_EVT["Events"]
+        BLK_TAG["Tags"]
+        BLK_SCR["Script"]
+        BLK_HRF["javascript:"]
+        BLK_WIN["window"]
+    end
+
+    BLK_ANG --> S_ANG
+    BLK_PAR --> S_PAR
+    BLK_QUO --> S_QUO
+    BLK_SPC --> S_SPC
+    BLK_KEY --> S_KEY
+    BLK_EVT --> S_EVT
+    BLK_TAG --> S_TAG
+    BLK_SCR --> S_SCR
+    BLK_HRF --> S_HRF
+    BLK_WIN --> S_WIN
+
+    subgraph STRATEGIES["R3+R4: ENCODING + STRUCTURE"]
+        S_ANG["ANGLE: entities, SVG decode"]
+        S_PAR["PAREN: backticks, throw, valueOf, hasInstance, Reflect, JSFuck"]
+        S_QUO["QUOTE: switch type, backtick, hex, entities"]
+        S_SPC["SPACE: tab, newline, slash, formfeed, comment"]
+        S_KEY["KEYWORD: confirm, prompt, print, eval+atob"]
+        S_EVT["EVENT: onload, ontoggle, onfocus, onbegin, popover"]
+        S_TAG["TAG: svg, body, details, input, math, custom"]
+        S_SCR["SCRIPT: close tag, backslash, unicode"]
+        S_HRF["HREF: data URI, protocol, tab inject"]
+        S_WIN["WINDOW: self, globalThis, this, top, parent"]
+    end
+
+    subgraph ADVANCED["ADVANCED STRATEGIES"]
+        direction LR
+        ADV_CLOB["DOM Clobbering"]
+        ADV_PROTO["Prototype Pollution"]
+        ADV_WNAME["Window.name"]
+        ADV_SMAP["Source Maps"]
+        ADV_SVG["SVG Upload"]
+        ADV_XHTML["XHTML"]
+        ADV_FUZZ["Mutation Fuzz"]
+        ADV_BROWSER["Browser-Specific"]
+    end
+
+    STRATEGIES --> R5
+    ADVANCED --> R5
+
+    subgraph R5["R5: EXECUTION"]
+        direction LR
+        AUTO["Auto-fire: onerror, onload, ontoggle, onfocus, onbegin, popover"]
+        INTERACT["Interaction: onclick, onmouseover, accesskey"]
+    end
+
+    R5 --> COMBINE["Combine: Tag + Event + Function"]
+    COMBINE --> TEST{Test Payload}
+
+    TEST -->|EXECUTED| XSS
+    TEST -->|BLOCKED| LEARN["Learn blocker"]
+    LEARN --> R2
+
+    TEST -->|EXHAUSTED| ENUM["PIVOT: Enumerate 80+ tags, 60+ events"]
+    ENUM --> COMBINE
+
+    style START fill:#1f2937,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style XSS fill:#22c55e,stroke:#fff,stroke-width:3px,color:#000
+    style R1 fill:#3b5998,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style R2 fill:#2a9d8f,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style STRATEGIES fill:#1e3a5f,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style ADVANCED fill:#1e3a5f,stroke:#f4a261,stroke-width:2px,color:#fff
+    style R5 fill:#e76f51,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style ENUM fill:#f4a261,stroke:#58a6ff,stroke-width:2px,color:#000
+    style LEARN fill:#9333ea,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style BASELINE fill:#1f2937,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style BSEARCH fill:#1f2937,stroke:#58a6ff,stroke-width:2px,color:#fff
+    style COMBINE fill:#1f2937,stroke:#58a6ff,stroke-width:2px,color:#fff
+```
+
+The feedback loop at the bottom is the key — `TEST → LEARN → R2 → STRATEGIES → R5 → COMBINE → TEST`. Every failed payload teaches the engine something, and every subsequent attempt is informed by everything that came before.
+
 ## What's Next
 
 Enigma currently handles reflected, stored, and DOM-based XSS across 40+ injection contexts. Areas that remain on the roadmap:
