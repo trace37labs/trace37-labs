@@ -19,7 +19,7 @@ Independent security research focused on breaking things to make them better.
 
 - GitHub: [trace37labs](https://github.com/trace37labs)
 - Email: paul@trace37.com
-- Twitter/X: @trace37_labs
+- Twitter/X: https://x.com/trace37_labs
 
 ### Responsible Disclosure
 
