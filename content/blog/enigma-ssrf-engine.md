@@ -15,10 +15,10 @@ I built Enigma's SSRF engine to automate this entire process. It implements a 4-
 
 The methodology and techniques implemented here draw from the published work of several researchers:
 
-- **[Brute Logic](https://brutelogic.com.br/)** — The 4-phase SSRF testing framework (Discovery, Target, Bypass, Confirm) that provides the structural backbone of the engine
+- **[Brute Logic](https://x.com/BRuteLogic)** — The 4-phase SSRF testing framework (Discovery, Target, Bypass, Confirm) that provides the structural backbone of the engine
 - **[Orange Tsai](https://x.com/orange_8361)** — URL parser confusion research exploiting differential behavior between validation libraries and HTTP clients
 - **[Justin Gardner](https://x.com/Rhynorater)** — Blind SSRF methodology and out-of-band canary token patterns for confirming exploitation without response visibility
-- **[Corben Leo](https://x.com/haborr)** — Feature-based SSRF discovery, identifying vulnerable functionality by application behavior rather than parameter names alone
+- **[Corben Leo](https://x.com/hacker_)** — Feature-based SSRF discovery, identifying vulnerable functionality by application behavior rather than parameter names alone
 
 ## The 4-Phase Methodology
 
