@@ -954,4 +954,4 @@ Fifty-seven hunters, each carrying hundreds of lines of methodology distilled fr
 
 The infrastructure is real. PostgreSQL stores thousands of attack patterns. Redis serves sub-millisecond working memory. Caido captures every HTTP request. jxscout analyzes every JavaScript file. Twenty-one passive workflows run silently on every proxied request. The OOB server at poc-harness.com confirms blind vulnerabilities. And through it all, the OODA loop keeps decisions structured — probe, confirm, exploit, document — with automatic abandonment when an approach stops producing results.
 
-The name is deliberate. Like the original Mastermind board game, the platform works through systematic elimination — probe, observe, narrow, confirm. Unlike the board game, it never runs out of guesses. It just gets better at making them.
+The platform works through systematic elimination — probe, observe, narrow, confirm. Unlike the board game, it never runs out of guesses. It just gets better at making them.
