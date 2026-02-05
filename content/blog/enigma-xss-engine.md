@@ -1,5 +1,5 @@
 ---
-title: "Enigma: An Autonomous XSS Engine Built on the 5-Rotor Methodology"
+title: "Enigma: An Autonomous XSS Engine Built on a 5-Rotor Methodology"
 date: 2026-02-04
 description: "A deep technical exploration of Enigma, an adaptive XSS detection engine that turns WAF evasion into a systematic, machine-driven process using five independent mutation rotors."
 tags: ["xss", "security-tooling", "waf-bypass", "browser-security", "enigma"]
@@ -13,7 +13,7 @@ This post walks through how the engine works, why the Enigma machine metaphor fi
 
 ## Credit
 
-The underlying methodology — the "5-Rotor" framework, the cascade orders, the systematic context-aware approach to XSS — comes from the work of [Gareth Heyes](https://x.com/garaborr) ([@garethheyes](https://portswigger.net/research/gareth-heyes)), a researcher at PortSwigger. His book [*JavaScript for Hackers*](https://www.amazon.co.uk/JavaScript-Hackers-Learn-Think-Like/dp/1119860555) provides the most systematic framework for XSS that exists. I built Enigma to encode that methodology into something a machine can execute autonomously.
+The underlying methodology — the "5-Rotor" framework, the cascade orders, the systematic context-aware approach to XSS — are based on the work of [Gareth Heyes](https://x.com/garaborr) ([@garethheyes](https://portswigger.net/research/gareth-heyes)), a researcher at PortSwigger. His book [*JavaScript for Hackers*](https://www.amazon.co.uk/JavaScript-Hackers-Learn-Think-Like/dp/1119860555) provides the most systematic framework for XSS that exists. I built Enigma to encode that methodology into something a machine can execute autonomously.
 
 ## Why "Enigma"? The Rotor Metaphor
 
@@ -27,7 +27,7 @@ XSS bypass works the same way. A payload that achieves execution is the product 
 4. **What** syntax structure carries the payload? (Structure)
 5. **How** does the JavaScript fire? (Execution)
 
-Each decision is a rotor. Each rotor has multiple positions. The WAF is the machine you're trying to break. And just like Bletchley Park's approach, you don't brute-force all combinations — you use what you learn from each test to constrain the search space.
+Each decision is a rotor. Each rotor has multiple positions. The WAF is the machine you're trying to break and then find the permutation that enables the 'malicious script' to run. Just like Bletchley Park's approach, you don't brute-force all combinations — you use what you learn from each test to constrain the search space.
 
 ```mermaid
 %%{init: {'theme': 'dark', 'themeVariables': { 'lineColor': '#58a6ff', 'primaryTextColor': '#fff'}}}%%
