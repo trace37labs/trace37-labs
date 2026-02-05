@@ -4,16 +4,17 @@ title: "About"
 
 ## Trace37 Labs
 
-Independent security research focused on breaking things to make them better.
+**Security Research | Exploit Development | Advanced Testing**
 
-### Focus Areas
+## What We Do
+We identify security flaws in complex systems through:
+- **Offensive Research**: Discovering novel attack vectors
+- **Deep Analysis**: Reverse engineering and binary exploitation  
+- **Modern Stack Security**: Cloud, APIs, and AI/ML systems
+- **Practical Defense**: Transforming findings into actionable fixes
 
-- Web application security
-- API vulnerability research
-- Cloud security misconfigurations
-- Reverse engineering
-- Exploit development
-- AI and Software Development
+## Why It Matters
+In today's landscape, security through obscurity is dead. We provide the adversarial perspective needed to build truly resilient systems.
 
 ### Contact
 
