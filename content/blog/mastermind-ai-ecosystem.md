@@ -496,9 +496,9 @@ The closing line captures the ethos: *"The best bug bounty hunters find bugs WHE
 
 ---
 
-## The Python Server — 310 Tools
+## The Python Server — 150+ Tools
 
-The Flask server at `mastermind_core/utils/mastermind_server.py` is the tool execution backbone. It registers 310 tools across 15+ categories:
+The Flask server at `mastermind_core/utils/mastermind_server.py` is the tool execution backbone. It registers 150+ tools across 15+ categories:
 
 | Category | Count | Key Tools |
 |----------|-------|-----------|
