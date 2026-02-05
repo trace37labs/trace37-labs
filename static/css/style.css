@@ -413,6 +413,46 @@ pre code {
   text-decoration: none;
 }
 
+/* Search */
+.search-container {
+  max-width: 100%;
+}
+
+.search-box {
+  margin-bottom: 2rem;
+}
+
+#search-input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+#search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+#search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-results {
+  min-height: 200px;
+}
+
+.search-hint {
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+}
+
 /* Tool cards */
 .tool-card {
   background: var(--bg-secondary);

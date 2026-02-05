@@ -38,5 +38,10 @@ disableKinds = ["taxonomy", "term"]
       unsafe = true
 
 [outputs]
-  home = ["HTML", "RSS"]
+  home = ["HTML", "RSS", "JSON"]
   section = ["HTML", "RSS"]
+
+[[menu.main]]
+  name = "search"
+  url = "/search/"
+  weight = 5

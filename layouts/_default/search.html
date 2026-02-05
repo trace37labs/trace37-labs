@@ -1,0 +1,86 @@
+{{ define "main" }}
+<div class="search-container">
+  <div class="section-header">
+    <h1>// search</h1>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="search-input" placeholder="Search posts, tags, content..." autofocus>
+  </div>
+
+  <div id="search-results" class="search-results">
+    <p class="search-hint">Start typing to search...</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
+<script>
+(function() {
+  let fuse;
+  let searchData = [];
+
+  // Fetch the search index
+  fetch('/index.json')
+    .then(response => response.json())
+    .then(data => {
+      searchData = data;
+      fuse = new Fuse(data, {
+        keys: [
+          { name: 'title', weight: 0.4 },
+          { name: 'tags', weight: 0.3 },
+          { name: 'content', weight: 0.2 },
+          { name: 'summary', weight: 0.1 }
+        ],
+        includeScore: true,
+        threshold: 0.4,
+        ignoreLocation: true
+      });
+    })
+    .catch(err => console.error('Search index load failed:', err));
+
+  const searchInput = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+
+  searchInput.addEventListener('input', function() {
+    const query = this.value.trim();
+
+    if (query.length < 2) {
+      searchResults.innerHTML = '<p class="search-hint">Start typing to search...</p>';
+      return;
+    }
+
+    if (!fuse) {
+      searchResults.innerHTML = '<p class="search-hint">Loading search index...</p>';
+      return;
+    }
+
+    const results = fuse.search(query);
+
+    if (results.length === 0) {
+      searchResults.innerHTML = '<p class="search-hint">No results found for "' + query + '"</p>';
+      return;
+    }
+
+    let html = '<ul class="post-list">';
+    results.slice(0, 20).forEach(result => {
+      const item = result.item;
+      html += `
+        <li class="post-item">
+          <div class="post-meta">${item.date} · ${item.section}</div>
+          <h3 class="post-title"><a href="${item.permalink}">${item.title}</a></h3>
+          ${item.summary ? '<p class="post-excerpt">' + item.summary.substring(0, 200) + '...</p>' : ''}
+          ${item.tags ? '<div class="tags">' + item.tags.map(t => '<span class="tag">' + t + '</span>').join('') + '</div>' : ''}
+        </li>
+      `;
+    });
+    html += '</ul>';
+
+    if (results.length > 20) {
+      html += '<p class="search-hint">Showing first 20 of ' + results.length + ' results</p>';
+    }
+
+    searchResults.innerHTML = html;
+  });
+})();
+</script>
+{{ end }}
