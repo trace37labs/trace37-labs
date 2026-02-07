@@ -113,6 +113,12 @@ flowchart TD
 
 The key insight is that this is not a linear pipeline. It's a *learning loop*. Every blocked payload teaches the engine something. That knowledge accumulates and constrains future decisions, making each subsequent attempt more informed than the last.
 
+### Enigma in Action
+
+<video autoplay loop muted playsinline style="width: 100%; border-radius: 8px; margin: 1.5rem 0; border: 1px solid var(--border);">
+  <source src="/videos/enigma-xss-demo.mp4" type="video/mp4">
+</video>
+
 ## Rotor 1: Context Detection
 
 The first question the engine asks: *where does my input land in the HTML response?*
