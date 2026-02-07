@@ -312,6 +312,48 @@ Evolution doesn't just test payloads — it **breeds better payloads** from succ
 
 The fitness function is the **heart** of evolutionary fuzzing. It quantifies "how close are we to XSS?" on a 0-1 scale.
 
+### 5.0 Critical Methodology: DOM Structure vs String Patterns
+
+**This distinction is fundamental to correct XSS detection.**
+
+A common mistake in XSS testing is using regex to match dangerous patterns in sanitized output. This produces massive false positives because DOMPurify doesn't just remove strings — it sanitizes HTML structure.
+
+**The Wrong Approach (Regex-based):**
+
+```typescript
+// ❌ WRONG: String pattern matching
+const sanitized = DOMPurify.sanitize(input);
+if (/onerror=/i.test(sanitized)) {
+  console.log("XSS found!");  // FALSE POSITIVE!
+}
+```
+
+**The Correct Approach (DOM-based):**
+
+```typescript
+// ✅ CORRECT: DOM structure verification
+const sanitized = DOMPurify.sanitize(input);
+const div = document.createElement('div');
+div.innerHTML = sanitized;
+
+if (div.querySelector('[onerror]')) {
+  console.log("XSS found!");  // Real finding
+}
+```
+
+**Why This Matters — False Positive Examples:**
+
+| Input | Output | Regex Match | DOM Query | Verdict |
+|-------|--------|-------------|-----------|---------|
+| `<div>onerror=alert(1)</div>` | `<div>onerror=alert(1)</div>` | ✅ "XSS!" | ❌ No match | **Safe** (text content) |
+| `<div data-x="onerror=1">` | `<div data-x="onerror=1">` | ✅ "XSS!" | ❌ No match | **Safe** (data attribute) |
+| `<title>onerror=alert(1)</title>` | `<title>onerror=alert(1)</title>` | ✅ "XSS!" | ❌ No match | **Safe** (title text) |
+| `<img onerror=alert(1)>` | `<img>` | ❌ No match | ❌ No match | **Safe** (DOMPurify worked) |
+
+The string `onerror=` appearing in output is meaningless. What matters is whether an **actual `onerror` attribute exists on an actual DOM element**.
+
+All fitness functions in this system use DOM queries, not regex pattern matching.
+
 ### 5.1 Track 1: Core mXSS Fitness
 
 ```typescript
@@ -335,28 +377,55 @@ if (hasFormMath) return 0.6;  // Known foothold!
 
 We know `<form><math>` causes structural mutations (3,269 found in prior research). Any payload preserving this structure gets **immediate 0.6 fitness** — a strong signal to evolution.
 
-**Test 2: Dangerous Tags Survival** (regex-based for speed)
+**Test 2: Dangerous Tags Survival** (DOM-based)
 
 ```typescript
-if (/<script[\s>]/i.test(sanitized)) return 1.0;  // Script tag survived!
-if (/<iframe[\s>]/i.test(sanitized)) return 1.0;
-if (/<object[\s>]/i.test(sanitized)) return 1.0;
-if (/<svg[\s>]/i.test(sanitized)) return 0.8;
-if (/<style[\s>]/i.test(sanitized)) return 0.7;
-if (/<form[\s>]/i.test(sanitized)) return 0.6;
+const div = document.createElement('div');
+div.innerHTML = sanitized;
+
+// Check for ACTUAL elements in DOM, not string patterns
+if (div.querySelector('script')) return 1.0;
+if (div.querySelector('iframe')) return 1.0;
+if (div.querySelector('object')) return 1.0;
+if (div.querySelector('embed')) return 1.0;
+if (div.querySelector('base')) return 0.9;
+if (div.querySelector('svg')) return 0.8;
+if (div.querySelector('style')) return 0.7;
+if (div.querySelector('form')) return 0.6;
 ```
 
-DOMPurify should block `<script>`, `<iframe>`, `<object>`. If they survive → **high fitness**.
+DOMPurify should block `<script>`, `<iframe>`, `<object>`. If actual elements survive in the DOM → **high fitness**.
 
-**Test 3: Attribute Survival Rate**
+**Test 3: Attribute Survival Rate** (DOM-based)
 
 ```typescript
-const inputEvents = input.match(/on[a-z]+\s*=/gi) || [];
-const sanitizedEvents = sanitized.match(/on[a-z]+\s*=/gi) || [];
-return sanitizedEvents.length / inputEvents.length;
+const div = document.createElement('div');
+div.innerHTML = sanitized;
+
+// Check for ACTUAL event handler attributes in DOM
+const eventHandlers = [
+  'onerror', 'onload', 'onclick', 'onmouseover', 'onfocus',
+  'onblur', 'onanimationstart', 'ontoggle', 'oninput', 'onchange'
+];
+
+for (const handler of eventHandlers) {
+  if (div.querySelector(`[${handler}]`)) {
+    return 1.0;  // Real event handler attribute found!
+  }
+}
+
+// Check for javascript: URLs in ACTUAL href/src attributes
+const links = div.querySelectorAll('[href], [src], [formaction]');
+for (const el of links) {
+  const href = el.getAttribute('href') || '';
+  const src = el.getAttribute('src') || '';
+  if (/^javascript:/i.test(href) || /^javascript:/i.test(src)) {
+    return 1.0;
+  }
+}
 ```
 
-Count how many event handlers survive. `onerror`, `onload`, `ontoggle` are XSS vectors.
+This checks for **actual** event handler attributes in the DOM tree, not string patterns that might appear in text content or data attributes.
 
 **Test 4: Null Byte Positioning** (CRITICAL — our 6,841 mismatches)
 
@@ -397,23 +466,35 @@ return sig1 !== sig2 ? 1.0 : 0;  // Tags changed → mutation!
 
 Classic mXSS: if the DOM tree structure changes after reparsing, dangerous content might appear.
 
-**Test 6: Execution Potential** (hybrid: regex pre-filter → DOM verification)
+**Test 6: Execution Potential** (DOM-based verification)
 
 ```typescript
-// Fast path: no HTML tags → safe
-if (!/<[a-zA-Z][^>]*>/.test(sanitized)) return 0;
+const div = document.createElement('div');
+div.innerHTML = sanitized;
 
-// Fast path: no dangerous patterns → safe
-if (!/on[a-z]+=|javascript:|<script|<iframe/i.test(sanitized)) return 0;
+// Check for ACTUAL dangerous elements/attributes in DOM
+const dangerous = div.querySelector(`
+  script,
+  iframe,
+  object,
+  embed,
+  [onerror],
+  [onload],
+  [onclick],
+  [onmouseover],
+  [onfocus],
+  [onanimationstart],
+  [ontoggle],
+  [href^="javascript:"],
+  [src^="javascript:"],
+  form[action^="javascript:"],
+  button[formaction^="javascript:"]
+`);
 
-// Slow path: DOM verification (catches false positives)
-divExec.innerHTML = sanitized;
-if (divExec.querySelector('[onerror], [onload], [ontoggle]')) {
-  return 1.0;  // Event handler is ACTUAL attribute, not text!
-}
+if (dangerous) return 1.0;  // REAL XSS confirmed!
 ```
 
-**Why hybrid?** Regex matches `onerror=` anywhere, including inside `<title>onerror=alert(1)</title>` (which is harmless text content). DOM verification confirms it's a real attribute on a real element.
+This is the definitive test. If any dangerous element or attribute exists as an **actual DOM node**, not as text content, we have confirmed XSS.
 
 **Weighted Total**:
 
@@ -934,16 +1015,27 @@ export class CoreMXSSEvaluator {
   }
 
   private detectExecutionPotential(sanitized: string): number {
-    // Fast path: no HTML
-    if (!/<[a-zA-Z][^>]*>/.test(sanitized)) return 0;
+    // Parse into DOM (NOT regex pattern matching!)
+    const div = this.document.createElement('div');
+    div.innerHTML = sanitized;
 
-    // Fast path: no dangerous patterns
-    if (!/on[a-z]+=|javascript:|<script/i.test(sanitized)) return 0;
+    // Check for ACTUAL dangerous elements/attributes in DOM
+    const dangerous = div.querySelector(`
+      script, iframe, object, embed,
+      [onerror], [onload], [onclick], [onmouseover],
+      [onfocus], [onanimationstart], [ontoggle]
+    `);
 
-    // Slow path: DOM verification
-    this.divExec.innerHTML = sanitized;
-    if (this.divExec.querySelector('[onerror], [onload], [ontoggle]')) {
-      return 1.0;  // CONFIRMED XSS!
+    if (dangerous) return 1.0;  // CONFIRMED XSS!
+
+    // Check javascript: URLs in ACTUAL attributes
+    const links = div.querySelectorAll('[href], [src]');
+    for (const el of links) {
+      const href = el.getAttribute('href') || '';
+      const src = el.getAttribute('src') || '';
+      if (/^javascript:/i.test(href) || /^javascript:/i.test(src)) {
+        return 1.0;
+      }
     }
 
     return 0;
