@@ -5,7 +5,7 @@ author: "trace37 labs"
 tags: ["security", "XSS", "DOMPurify", "fuzzing", "evolutionary-algorithms", "CVE", "research"]
 categories: ["Security Research"]
 description: "A novel methodology for discovering XSS sanitization bypasses using evolutionary algorithms to systematically explore DOMPurify's attack surface"
-draft: true
+draft: false
 ---
 
 **Target**: DOMPurify 3.2.4+ core library bypass
