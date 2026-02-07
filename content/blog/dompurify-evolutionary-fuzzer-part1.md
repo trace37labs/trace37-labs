@@ -312,7 +312,7 @@ Evolution doesn't just test payloads — it **breeds better payloads** from succ
 
 The fitness function is the **heart** of evolutionary fuzzing. It quantifies "how close are we to XSS?" on a 0-1 scale.
 
-All fitness evaluation uses **DOM queries** — we parse sanitized output into a real DOM tree and check for actual dangerous elements and attributes, not string patterns.
+Fitness evaluation uses a **hybrid approach**: fast regex/string checks for structural patterns (form+math nesting, null byte survival), combined with **DOM parsing for dangerous element verification**. This prevents false positives from regex matching text content while maintaining evaluation speed.
 
 ### 5.1 Track 1: Core mXSS Fitness
 
@@ -324,7 +324,7 @@ interface CoreMXSSFitness {
   null_byte_position: number; // 0-1: Null byte in critical position
   reparse_delta: number;      // 0-1: innerHTML reparse difference
   execution: number;          // 0-1: XSS confirmed (1.0 = SUCCESS!)
- : number;             // Weighted sum
+  total: number;              // Weighted sum
 }
 ```
 
@@ -459,13 +459,13 @@ This is the definitive test. If any dangerous element or attribute exists as an 
 **Weighted Total**:
 
 ```typescript
-const =
+const total =
   structural * 0.1 +
   dangerous_tags * 0.3 +
   attributes * 0.2 +
   null_byte_position * 0.1 +
   reparse_delta * 0.2 +
-  execution * 1.0;  // If execution=1.0,=1.0 (override all)
+  execution * 1.0;  // If execution=1.0, total=1.0 (override all)
 ```
 
 **If `execution = 1.0` → we found XSS → STOP EVERYTHING.**
@@ -481,11 +481,11 @@ Payload B: "<form><math>..."  → Blocked → 0 (discard)
 Evolutionary fuzzing:
 ```
 Payload A: "random garbage" → Blocked → 0.0 (discard)
-Payload B: "<form><math>..."  → Blocked → 0.6 (BREED FROM THIS!)
+Payload B: "<form><math>..."  → Structure survives → 0.24 (BREED FROM THIS!)
          ↓
-Child 1: <form><math><img src=x onerror=alert(1)>> → 0.8 (getting closer!)
+Child 1: <form><math><mtext></form><form>... → Reparse mutation detected → 0.44 (getting closer!)
          ↓
-Child 2: <form><math>\x00<img src=x onerror=alert(1)>> → 0.9 (very close!)
+Child 2: <form><math>\x00<mtext>...</math></form> → Null byte + mutation → 0.54 (building momentum!)
          ↓
 Child 3: [THE MAGIC COMBINATION] → 1.0 (XSS!)
 ```
@@ -970,7 +970,7 @@ export class CoreMXSSEvaluator {
       null_byte_position: this.analyzeNullBytePosition(payload.content, sanitized),
       reparse_delta: this.measureReparseDelta(sanitized),
       execution: this.detectExecutionPotential(sanitized),
-     : this.calculateTotal(/* ... */)
+      total: this.calculateTotal(/* ... */)
     };
   }
 
