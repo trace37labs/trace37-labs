@@ -17,13 +17,13 @@ draft: false
 
 ## Executive Summary
 
-This paper presents a novel methodology for discovering XSS sanitization bypasses using evolutionary algorithms. We describe a large-scale evolutionary fuzzing system targeting DOMPurify, the industry-standard XSS sanitization library (30M+ weekly npm downloads). Our goal is to discover **zero-day CVEs in DOMPurify's core sanitization logic** — not application misconfigurations, but genuine bypasses that work against `DOMPurify.sanitize()` with default settings.
+This paper presents a novel methodology for discovering XSS sanitization bypasses using evolutionary algorithms. We describe a large-scale evolutionary fuzzing system targeting DOMPurify, the industry-standard XSS sanitization library (24M+ weekly npm downloads). Our goal is to discover **zero-day CVEs in DOMPurify's core sanitization logic** — not application misconfigurations, but genuine bypasses that work against `DOMPurify.sanitize()` with default settings.
 
 **Why this matters**: Core DOMPurify bypasses continue to be discovered (CVE-2025-26791 in January 2025, CVE-2024-45801 in September 2024), demonstrating that even mature, battle-tested sanitizers have undiscovered attack surfaces. A successful core bypass affects every application using DOMPurify and carries significant impact:
 
 - **CVE assignment** with industry-wide disclosure
 - **Bug bounties** (GitHub Security Lab, HackerOne, etc.)
-- **Immediate security patches** affecting 30M+ weekly downloads
+- **Immediate security patches** affecting 24M+ weekly downloads
 - **Research recognition** in the XSS/mXSS research community
 
 This paper documents our hypothesis, methodology, and architecture. We describe how evolutionary algorithms can systematically explore the vast attack surface of modern HTML sanitizers by treating vulnerability discovery as an optimization problem rather than binary testing.
@@ -65,7 +65,7 @@ DOMPurify (created by Cure53) is the de facto standard for client-side HTML sani
 - **WordPress Gutenberg** (block editor)
 - **Hundreds of major SaaS platforms**
 
-With 30M+ weekly downloads and integration into critical infrastructure, a DOMPurify bypass has massive blast radius.
+With 24M+ weekly downloads and integration into critical infrastructure, a DOMPurify bypass has massive blast radius.
 
 ### Why Core Bypasses Are Rare (But Not Impossible)
 
@@ -79,7 +79,7 @@ DOMPurify has been battle-tested for years. Most discovered "bypasses" are actua
 
 - **CVE-2025-26791** (January 2025): Template literal regex bypass in DOMPurify 3.2.3
 - **CVE-2024-45801** (September 2024): Namespace confusion in SVG/MathML handling
-- **CVE-2023-51467** (December 2023): Parser differential in form/table fostering
+- **CVE-2020-26870** (October 2020): Namespace confusion in nesting-based mXSS
 
 Each of these worked against **default configuration** with no application errors. That's what we're hunting for.
 
@@ -827,7 +827,7 @@ A complete evolutionary campaign targeting DOMPurify represents substantial comp
 **Tier 1: Core CVE Discovery**
 - Zero-day bypass in DOMPurify's core sanitization logic
 - Works against default configuration with no application-level errors
-- Industry-wide impact affecting 30M+ weekly downloads
+- Industry-wide impact affecting 24M+ weekly downloads
 - CVE assignment and responsible disclosure
 - Significant bug bounties across multiple platforms
 
@@ -1064,7 +1064,7 @@ export function crossover(parent1: Payload, parent2: Payload): Payload {
 - **CVE-2025-26791**: DOMPurify 3.2.3 template literal regex bypass (Jan 2025)
 - **CVE-2024-45801**: DOMPurify namespace confusion (Sep 2024)
 - **CVE-2023-48219**: TinyMCE + DOMPurify post-processing (Dec 2023)
-- **CVE-2023-51467**: DOMPurify parser differential (Dec 2023)
+- **CVE-2020-26870**: DOMPurify nesting-based mXSS (Oct 2020)
 - **CVE-2020-11022**: jQuery ≤3.4.1 nested tag vulnerability
 
 ---
