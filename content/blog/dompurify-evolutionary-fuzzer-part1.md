@@ -457,7 +457,7 @@ Evolution **climbs the fitness gradient** toward XSS.
 
 ## <a name="mutations"></a>6. Mutation Operators: The 5-Rotor Methodology
 
-Inspired by Gareth Heyes' Enigma tool, we implement **5 mutation rotors** that can be combined:
+Inspired by Gareth Heyes, we implement **5 mutation rotors** built into the trace37 Enigma XSS tool that can be combined:
 
 ### Rotor 1: Context Wrappers (WHERE)
 
