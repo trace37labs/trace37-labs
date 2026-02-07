@@ -312,47 +312,7 @@ Evolution doesn't just test payloads — it **breeds better payloads** from succ
 
 The fitness function is the **heart** of evolutionary fuzzing. It quantifies "how close are we to XSS?" on a 0-1 scale.
 
-### 5.0 Critical Methodology: DOM Structure vs String Patterns
-
-**This distinction is fundamental to correct XSS detection.**
-
-A common mistake in XSS testing is using regex to match dangerous patterns in sanitized output. This produces massive false positives because DOMPurify doesn't just remove strings — it sanitizes HTML structure.
-
-**The Wrong Approach (Regex-based):**
-
-```typescript
-// ❌ WRONG: String pattern matching
-const sanitized = DOMPurify.sanitize(input);
-if (/onerror=/i.test(sanitized)) {
-  console.log("XSS found!");  // FALSE POSITIVE!
-}
-```
-
-**The Correct Approach (DOM-based):**
-
-```typescript
-// ✅ CORRECT: DOM structure verification
-const sanitized = DOMPurify.sanitize(input);
-const div = document.createElement('div');
-div.innerHTML = sanitized;
-
-if (div.querySelector('[onerror]')) {
-  console.log("XSS found!");  // Real finding
-}
-```
-
-**Why This Matters — False Positive Examples:**
-
-| Input | Output | Regex Match | DOM Query | Verdict |
-|-------|--------|-------------|-----------|---------|
-| `<div>onerror=alert(1)</div>` | `<div>onerror=alert(1)</div>` | ✅ "XSS!" | ❌ No match | **Safe** (text content) |
-| `<div data-x="onerror=1">` | `<div data-x="onerror=1">` | ✅ "XSS!" | ❌ No match | **Safe** (data attribute) |
-| `<title>onerror=alert(1)</title>` | `<title>onerror=alert(1)</title>` | ✅ "XSS!" | ❌ No match | **Safe** (title text) |
-| `<img onerror=alert(1)>` | `<img>` | ❌ No match | ❌ No match | **Safe** (DOMPurify worked) |
-
-The string `onerror=` appearing in output is meaningless. What matters is whether an **actual `onerror` attribute exists on an actual DOM element**.
-
-All fitness functions in this system use DOM queries, not regex pattern matching.
+All fitness evaluation uses **DOM queries** — we parse sanitized output into a real DOM tree and check for actual dangerous elements and attributes, not string patterns.
 
 ### 5.1 Track 1: Core mXSS Fitness
 
