@@ -13,6 +13,8 @@ draft: false
 
 ---
 
+<br>
+
 ## Executive Summary
 
 This paper presents a novel methodology for discovering XSS sanitization bypasses using evolutionary algorithms. We describe a large-scale evolutionary fuzzing system targeting DOMPurify, the industry-standard XSS sanitization library (30M+ weekly npm downloads). Our goal is to discover **zero-day CVEs in DOMPurify's core sanitization logic** — not application misconfigurations, but genuine bypasses that work against `DOMPurify.sanitize()` with default settings.
@@ -28,6 +30,8 @@ This paper documents our hypothesis, methodology, and architecture. We describe 
 
 ---
 
+<br>
+
 ## Table of Contents
 
 1. [Background: Why DOMPurify?](#background)
@@ -41,6 +45,8 @@ This paper documents our hypothesis, methodology, and architecture. We describe 
 9. [Research Outcomes and Future Directions](#outcomes)
 
 ---
+
+<br>
 
 ## <a name="background"></a>1. Background: Why DOMPurify?
 
@@ -79,6 +85,8 @@ Each of these worked against **default configuration** with no application error
 
 ---
 
+<br>
+
 ## <a name="research-foundation"></a>2. Research Foundation & Prior Art
 
 Our approach builds on three pillars of existing research:
@@ -116,6 +124,8 @@ Kévin GERVOT's (mizu.re) research catalogs real-world DOMPurify bypasses:
 **Our divergence**: We're intentionally **NOT** targeting application misconfigurations. Those are valuable for bug bounties but don't earn CVEs. We want the library itself.
 
 ---
+
+<br>
 
 ## <a name="attack-surface"></a>3. Attack Surface Analysis
 
@@ -206,6 +216,8 @@ We define success at **four levels**:
 
 ---
 
+<br>
+
 ## <a name="architecture"></a>4. Evolutionary Fuzzing Architecture
 
 ### 4.1 Why Evolution?
@@ -293,6 +305,8 @@ Evolution doesn't just test payloads — it **breeds better payloads** from succ
 4. **Limit**: 50,000 generations maximum
 
 ---
+
+<br>
 
 ## <a name="fitness"></a>5. Fitness Functions: Measuring Partial Success
 
@@ -439,6 +453,8 @@ Evolution **climbs the fitness gradient** toward XSS.
 
 ---
 
+<br>
+
 ## <a name="mutations"></a>6. Mutation Operators: The 5-Rotor Methodology
 
 Inspired by Gareth Heyes' Enigma tool, we implement **5 mutation rotors** that can be combined:
@@ -554,6 +570,8 @@ Each payload can undergo **multiple rotors** sequentially:
 **Combinatorial explosion**: 8 wrappers × 12 tags × 30 null mutations × 15 unicode mutations = **43,200 combinations** from base corpus alone. Evolution explores this space guided by fitness.
 
 ---
+
+<br>
 
 ## <a name="implementation"></a>7. Implementation Details
 
@@ -702,6 +720,8 @@ This lets us **watch evolution in action** — which payload families dominate, 
 
 ---
 
+<br>
+
 ## <a name="performance"></a>8. Expected Performance Characteristics
 
 ### 8.1 Theoretical Performance Metrics
@@ -754,6 +774,8 @@ The system includes real-time monitoring capabilities:
 **CLI monitoring**: JSON-based status files and structured logging for programmatic access
 
 ---
+
+<br>
 
 ## <a name="outcomes"></a>9. Research Outcomes and Future Directions
 
@@ -833,6 +855,8 @@ The negative result (no bypass found) is as valuable as positive discovery—it 
 
 ---
 
+<br>
+
 ## 10. Conclusion
 
 This paper presents a novel methodology for systematic XSS bypass discovery using evolutionary algorithms. Our approach targeting DOMPurify represents a significant departure from traditional fuzzing:
@@ -882,6 +906,8 @@ By framing vulnerability discovery as an optimization problem, evolutionary algo
 **The future of security testing is not random—it's evolutionary.**
 
 ---
+
+<br>
 
 ## Appendix A: Key Code Snippets
 
@@ -967,6 +993,8 @@ export function crossover(parent1: Payload, parent2: Payload): Payload {
 
 ---
 
+<br>
+
 ## Appendix B: Resources & References
 
 ### Research Papers
@@ -999,6 +1027,8 @@ export function crossover(parent1: Payload, parent2: Payload): Payload {
 *"Evolution doesn't care about elegant solutions. It cares about what works."*
 
 ---
+
+<br>
 
 ## Acknowledgments
 
